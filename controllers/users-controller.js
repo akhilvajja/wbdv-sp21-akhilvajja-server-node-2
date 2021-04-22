@@ -1,49 +1,43 @@
-const usersService = require("../services/users/users-service")
-
 module.exports = (app) => {
+    const usersModel = require("../db/users/users-model")
+
     const register = (req, res) => {
         const user = req.body;
-        usersService.register(user, res)
+        // TODO: move this to a service file
+        usersModel.create(user)
             .then((actualUser) => {
-                req.session["profile"] = actualUser;
+                req.session['currentUser'] = actualUser
                 res.send(actualUser)
             })
     }
-    
     const login = (req, res) => {
-        const credentials = req.body;
-        usersService.login(credentials)
-            .then((user) => {
-                if(user) {
-                    req.session["profile"] = user;
-                    res.send(user)
-                } else {
-                    res.send(403)
-                }
-            })
+        const user = req.body;
+        usersModel.find({
+            username: user.username,
+            password: user.password
+        }).then((actualUser) => {
+            if(actualUser) {
+                req.session["currentUser"] = actualUser
+                res.send(actualUser)
+            } else {
+                res.send(403)
+            }
+        })
     }
-    
+    const logout = (req, res) => {
+        req.session
+    }
     const profile = (req, res) => {
-        const currentUser = req.session["profile"];
-        res.json(currentUser)
-    }
-    
-    const createUser = (req, res) => {
-        const newUser = req.body;
-        const currentUser = req.session["profile"];
-        if(currentUser && currentUser.role === "ADMIN") {
-            usersService.createUser(newUser)
+        const currentUser = req.session["currentUser"]
+        if(currentUser) {
+            res.send(currentUser)
         } else {
             res.send(403)
         }
     }
-    const findAllUsers = (req, res) => {
-        usersService.findAllUsers()
-            .then((users) => res.send(users))
-    }
 
-    app.post("/api/register", register);
-    app.post("/api/login", login);
-    app.post("/api/users", createUser);
-    app.get("/api/users", findAllUsers);
+    app.post("/api/register", register)
+    app.post("/api/login", login)
+    app.post("/api/logout", logout)
+    app.post("/api/profile", profile)
 }

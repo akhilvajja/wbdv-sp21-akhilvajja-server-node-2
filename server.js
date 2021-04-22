@@ -19,6 +19,19 @@ app.use(session({
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/whiteboard-01', {useNewUrlParser: true, useUnifiedTopology: true});
 
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/whiteboard',
+    {useNewUrlParser: true, useUnifiedTopology: true});
+
+const session = require('express-session')
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    // cookie: { secure: true }
+}))
+
+
 // configure CORS
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
