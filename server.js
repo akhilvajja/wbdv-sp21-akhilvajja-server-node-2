@@ -1,9 +1,10 @@
 // TODO: review https://expressjs.com/
 const express = require('express')
+require('dotenv').config();
 const app = express()
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: false }))
-
+const uri = process.env.MONGODB_URI;
 // parse application/json
 app.use(bodyParser.json())
 
@@ -18,7 +19,7 @@ app.use(session({
 
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/whiteboard',
+mongoose.connect(uri,
     {useNewUrlParser: true, useUnifiedTopology: true});
 
 
@@ -42,4 +43,4 @@ demos(app);
 require("./controllers/quizzes-controller")(app)
 require("./controllers/question-controller")(app)
 
-app.listen(4000)
+app.listen(process.env.PORT);
