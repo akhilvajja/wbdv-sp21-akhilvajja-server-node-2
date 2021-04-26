@@ -16,20 +16,11 @@ app.use(session({
     // cookie: { secure: true }
 }))
 
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/whiteboard-01', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/whiteboard',
     {useNewUrlParser: true, useUnifiedTopology: true});
 
-const session = require('express-session')
-app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    // cookie: { secure: true }
-}))
 
 
 // configure CORS
@@ -50,6 +41,5 @@ demos(app);
 
 require("./controllers/quizzes-controller")(app)
 require("./controllers/question-controller")(app)
-require("./controllers/users-controller")(app)
 
 app.listen(4000)
